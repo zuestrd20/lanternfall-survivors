@@ -1,20 +1,20 @@
 /** Lanternfall — deterministic, renderer-independent survivor simulation. */
 export const CHARACTERS = [
-  { id: 'ember', name: 'Ember', title: 'The Cinder Scout', description: 'A quick shot and a bright spark. Starts with Emberbolt and 15% extra damage.', color: '#ffad66', weapon: 'fire', bonus: '+15% damage' },
-  { id: 'tide', name: 'Tide', title: 'The Moon Keeper', description: 'Keep your cool in the crowd. Starts with Moonfrost and 15% faster casting.', color: '#79d9ef', weapon: 'frost', bonus: '15% faster casting' },
-  { id: 'thorn', name: 'Thorn', title: 'The Grove Guardian', description: 'Let the forest circle you. Starts with Briar Orbit and 25 extra health.', color: '#a8de83', weapon: 'orbit', bonus: '+25 maximum health' },
+  { id: 'ember', name: '燼火', title: '逐焰斥候', description: '以焰矢開局，所有武器傷害提高 15%。', color: '#ffad66', weapon: 'fire', bonus: '傷害 +15%' },
+  { id: 'tide', name: '澄月', title: '守月旅人', description: '以霜環開局，所有武器冷卻縮短 15%。', color: '#79d9ef', weapon: 'frost', bonus: '冷卻 −15%' },
+  { id: 'thorn', name: '棘森', title: '森境守衛', description: '以月刃開局，最大生命額外增加 25 點。', color: '#a8de83', weapon: 'orbit', bonus: '最大生命 +25' },
 ];
 
 export const UPGRADES = {
-  fire: { id: 'fire', name: 'Emberbolt', description: 'Seeks the nearest foe. Higher ranks add bolts and damage.', kind: 'weapon', color: '#ffad66', maxLevel: 3, evolution: 'Phoenix Volley', requires: 'Emberbolt III + Might II' },
-  orbit: { id: 'orbit', name: 'Briar Orbit', description: 'Blades circle you, cutting through nearby foes.', kind: 'weapon', color: '#a8de83', maxLevel: 3, evolution: 'Verdant Halo', requires: 'Briar Orbit III + Haste II' },
-  thunder: { id: 'thunder', name: 'Starcall', description: 'Lightning leaps between foes. More ranks, more chains.', kind: 'weapon', color: '#d4afff', maxLevel: 3, evolution: 'Astral Tempest', requires: 'Starcall III + Rhythm II' },
-  frost: { id: 'frost', name: 'Moonfrost', description: 'A pulse of moonlight damages and slows nearby foes.', kind: 'weapon', color: '#79d9ef', maxLevel: 3, evolution: 'Winter Moon', requires: 'Moonfrost III + Reach II' },
-  atk: { id: 'atk', name: 'Might', description: '+20% damage from every weapon.', kind: 'passive', color: '#ffad66', maxLevel: 3 },
-  speed: { id: 'speed', name: 'Haste', description: '+10% movement speed and a faster dash recharge.', kind: 'passive', color: '#a8de83', maxLevel: 3 },
-  magnet: { id: 'magnet', name: 'Reach', description: 'Collect starlight from farther away. +45 pickup range.', kind: 'passive', color: '#79d9ef', maxLevel: 3 },
-  hp: { id: 'hp', name: 'Heartwood', description: '+25 maximum health. Heal 35 health now.', kind: 'passive', color: '#f7a4bd', maxLevel: 3 },
-  cooldown: { id: 'cooldown', name: 'Rhythm', description: 'Cast all weapons 12% faster.', kind: 'passive', color: '#d4afff', maxLevel: 3 },
+  fire: { id: 'fire', name: '焰矢', description: '自動射向最近敵人。升階增加箭數與傷害。', kind: 'weapon', color: '#ffad66', maxLevel: 3, evolution: '鳳凰齊射', requires: '焰矢 III ＋ 力量 II' },
+  orbit: { id: 'orbit', name: '月刃', description: '月刃環繞身邊，切開近處敵群。', kind: 'weapon', color: '#a8de83', maxLevel: 3, evolution: '森羅月輪', requires: '月刃 III ＋ 疾行 II' },
+  thunder: { id: 'thunder', name: '雷印', description: '召來連鎖雷光。升階增加連鎖數與傷害。', kind: 'weapon', color: '#d4afff', maxLevel: 3, evolution: '星界雷暴', requires: '雷印 III ＋ 急速 II' },
+  frost: { id: 'frost', name: '霜環', description: '月光脈衝傷害並減速周圍敵人。', kind: 'weapon', color: '#79d9ef', maxLevel: 3, evolution: '永冬之月', requires: '霜環 III ＋ 拾光 II' },
+  atk: { id: 'atk', name: '力量', description: '所有武器傷害增加 20%。', kind: 'passive', color: '#ffad66', maxLevel: 3 },
+  speed: { id: 'speed', name: '疾行', description: '移速增加 10%，衝刺冷卻縮短 0.4 秒。', kind: 'passive', color: '#a8de83', maxLevel: 3 },
+  magnet: { id: 'magnet', name: '拾光', description: '拾取範圍增加 45，更輕鬆收集星光。', kind: 'passive', color: '#79d9ef', maxLevel: 3 },
+  hp: { id: 'hp', name: '心木', description: '最大生命增加 25，立即恢復 35 生命。', kind: 'passive', color: '#f7a4bd', maxLevel: 3 },
+  cooldown: { id: 'cooldown', name: '急速', description: '所有武器冷卻縮短 12%。', kind: 'passive', color: '#d4afff', maxLevel: 3 },
 };
 
 const EVOLUTIONS = { fire: 'atk', orbit: 'speed', thunder: 'cooldown', frost: 'magnet' };
@@ -36,7 +36,7 @@ export class Game {
   reset({ seed = this.seed, character = this.character } = {}) {
     this.seed = (Number(seed) >>> 0) || 1;
     this.character = CHARACTERS.find(c => c.id === character)?.id || 'ember';
-    this._rng = this.seed; this._id = 0; this._accumulator = 0; this._ticks = 0;
+    this._rng = this.seed; this._bonusDamage = 0; this._id = 0; this._accumulator = 0; this._ticks = 0;
     this.state = 'playing'; this.time = 0; this.level = 1; this.xp = 0; this.xpNeeded = 10; this.kills = 0;
     this.player = { x: 1200, y: 1200, radius: 12, hp: this.character === 'thorn' ? 125 : 100, maxHp: this.character === 'thorn' ? 125 : 100, invuln: 1.2, facing: { x: 0, y: 1 }, dashTime: 0, moving: false };
     this.weapons = { fire: 0, orbit: 0, thunder: 0, frost: 0 };
@@ -52,7 +52,7 @@ export class Game {
   }
   start(options) { return this.reset(options); }
   random() { let x = this._rng; x ^= x << 13; x ^= x >>> 17; x ^= x << 5; this._rng = x >>> 0; return this._rng / 4294967296; }
-  get damageMultiplier() { return (this.character === 'ember' ? 1.15 : 1) * (1 + this.passives.atk * .2); }
+  get damageMultiplier() { return (this.character === 'ember' ? 1.15 : 1) * (1 + this.passives.atk * .2 + this._bonusDamage); }
   get cooldownMultiplier() { return (this.character === 'tide' ? .85 : 1) * (1 - this.passives.cooldown * .12); }
   get moveSpeed() { return 205 * (1 + this.passives.speed * .1); }
   get pickupRange() { return 75 + this.passives.magnet * 45; }
@@ -91,7 +91,7 @@ export class Game {
     this.texts = this.texts.filter(t => t.life > 0);
     if (!this.bossSpawned && this.time >= 360) this._spawnBoss();
     this._spawnTimer -= dt;
-    while (this._spawnTimer <= 0) { this._spawnTimer += this.bossSpawned ? 1.1 : Math.max(.19, .74 - this.time / 680); this._spawnEnemy(); }
+    while (this._spawnTimer <= 0) { this._spawnTimer += this.bossSpawned ? 1.1 : Math.max(.145, .74 - this.time / 590); this._spawnEnemy(); }
     this._moveEnemies(dt);
     this._fireWeapons(dt);
     this._moveBullets(dt);
@@ -113,17 +113,17 @@ export class Game {
     const type = forceType || (this.time > 140 && roll < .13 ? 'tank' : this.time > 85 && roll < .29 ? 'shooter' : this.time > 35 && roll < .49 ? 'charger' : 'minion');
     const definitions = { minion: { radius: 13, hp: 25, speed: 66, damage: 10, xp: 3 }, charger: { radius: 15, hp: 49, speed: 76, damage: 15, xp: 5 }, shooter: { radius: 15, hp: 48, speed: 52, damage: 12, xp: 6 }, tank: { radius: 24, hp: 145, speed: 43, damage: 20, xp: 10 } };
     const definition = definitions[type]; if (!definition) return null;
-    const hp = Math.round(definition.hp * (1 + Math.min(this.time, 360) / 470));
+    const hp = Math.round(definition.hp * (1 + Math.min(this.time, 360) / 220));
     const enemy = { id: ++this._id, ...this._spawnPoint(), type, ...definition, hp, maxHp: hp, speed: definition.speed * (1 + Math.min(this.time, 360) / 1400), slow: 0, flash: 0, windup: 0, aimX: 0, aimY: 0, spawnTime: .5, attackCooldown: 1 + this.random() * 2.5, chargeTime: 0, hitCooldown: 0, phase: this.random() * TAU };
     this.enemies.push(enemy); this.metrics.spawned++; return enemy;
   }
   _spawnBoss() {
     this.bossSpawned = true;
     const pos = this._spawnPoint(430);
-    const boss = { id: ++this._id, ...pos, type: 'boss', radius: 42, hp: 5600, maxHp: 5600, speed: 44, damage: 24, xp: 0, slow: 0, flash: 0, windup: 1.6, aimX: this.player.x, aimY: this.player.y, spawnTime: 1.6, attackCooldown: 2.5, chargeTime: 0, hitCooldown: 0, phase: 0 };
+    const boss = { id: ++this._id, ...pos, type: 'boss', radius: 42, hp: 26000, maxHp: 26000, speed: 44, damage: 24, xp: 0, slow: 0, flash: 0, windup: 1.6, aimX: this.player.x, aimY: this.player.y, spawnTime: 1.6, attackCooldown: 2.5, chargeTime: 0, hitCooldown: 0, phase: 0 };
     if (this.enemies.length >= this.caps.enemies) { const old = this.enemies.find(e => e.type !== 'boss'); if (old) { this._dropXP(old.x, old.y, old.xp); this.enemies.splice(this.enemies.indexOf(old), 1); } }
     this.enemies.push(boss); this.boss = boss; this.metrics.spawned++;
-    this._effect('warning', pos.x, pos.y, 85, 1.6, '#ff687d'); this._text(this.player.x, this.player.y - 65, 'THE HOLLOW KING', '#ff9eac', 2.4); this.events.push({ type: 'boss' });
+    this._effect('warning', pos.x, pos.y, 85, 1.6, '#ff687d'); this._text(this.player.x, this.player.y - 65, '長夜之王降臨', '#ff9eac', 2.4); this.events.push({ type: 'boss' });
   }
   _moveEnemies(dt) {
     const p = this.player;
@@ -230,11 +230,11 @@ export class Game {
     this.enemies = this.enemies.filter(e => e.hp > 0);
   }
   _damageEnemy(enemy, amount) {
-    if (enemy.hp <= 0 || this.state !== 'playing') return;
-    this.metrics.damageDealt += Math.min(enemy.hp, amount); enemy.hp -= amount; enemy.flash = .09;
+    if (enemy.hp <= 0 || this.state !== 'playing' || (enemy.type === 'boss' && enemy.spawnTime > 0)) return;
+    this.metrics.damageDealt += Math.min(enemy.hp, amount); enemy.hp = Math.max(0, enemy.hp - amount); enemy.flash = .09;
     if (enemy.hp > 0) return;
     this.kills++; this._effect('burst', enemy.x, enemy.y, enemy.radius + 8, .24, enemy.type === 'boss' ? '#fbd698' : '#bac989');
-    if (enemy.type === 'boss') { this.state = 'won'; this._bossAttack = null; this.enemyBullets = []; this.events.push({ type: 'victory' }); this._text(this.player.x, this.player.y - 45, 'DAWN RETURNS', '#fff0b8', 10); return; }
+    if (enemy.type === 'boss') { this.state = 'won'; this._bossAttack = null; this.enemyBullets = []; this.events.push({ type: 'victory' }); this._text(this.player.x, this.player.y - 45, '黎明歸來', '#fff0b8', 10); return; }
     this._dropXP(enemy.x, enemy.y, enemy.xp);
     if (this.random() < .027 && this.drops.length < this.caps.drops) this.drops.push({ id: ++this._id, x: enemy.x, y: enemy.y, radius: 7, value: 18, type: 'heal' });
   }
@@ -270,7 +270,7 @@ export class Game {
     });
   }
   _levelUp() {
-    this.xp -= this.xpNeeded; this.level++; this.xpNeeded = 10 + (this.level - 1) * 5;
+    this.xp -= this.xpNeeded; this.level++; this.xpNeeded = 10 + (this.level - 1) * 9;
     this.state = 'upgrade'; this._dashQueued = false;
     this._makeChoices(); this.events.push({ type: 'levelup', level: this.level });
   }
@@ -282,9 +282,9 @@ export class Game {
     if (weaponPool.length) { const item = weaponPool[Math.floor(this.random() * weaponPool.length)]; chosen.push(item); pool.splice(pool.indexOf(item), 1); }
     while (chosen.length < 3 && pool.length) chosen.push(pool.splice(Math.floor(this.random() * pool.length), 1)[0]);
     const extras = [
-      { id: 'mend', name: 'Second Wind', description: 'Restore 45 health.', kind: 'boon', color: '#f7a4bd', maxLevel: Infinity },
-      { id: 'power', name: 'Overgrowth', description: '+5% weapon damage for the rest of this run.', kind: 'boon', color: '#ffad66', maxLevel: Infinity },
-      { id: 'renew', name: 'Deep Roots', description: '+10 maximum health and heal 10.', kind: 'boon', color: '#a8de83', maxLevel: Infinity },
+      { id: 'mend', name: '回春', description: '立即恢復 45 點生命。', kind: 'boon', color: '#f7a4bd', maxLevel: Infinity },
+      { id: 'power', name: '繁茂', description: '本局所有武器傷害額外增加 5%。', kind: 'boon', color: '#ffad66', maxLevel: Infinity },
+      { id: 'renew', name: '深根', description: '最大生命增加 10，立即恢復 10 生命。', kind: 'boon', color: '#a8de83', maxLevel: Infinity },
     ];
     for (const extra of extras) if (chosen.length < 3) chosen.push(extra);
     this.choices = chosen.map(item => { const level = item.kind === 'weapon' ? this.weapons[item.id] : (this.passives[item.id] || 0); return { ...item, level, nextLevel: level + 1 }; });
@@ -297,7 +297,7 @@ export class Game {
     if (id === 'hp') { this.player.maxHp += 25; this.player.hp = Math.min(this.player.maxHp, this.player.hp + 35); }
     if (id === 'mend') this.player.hp = Math.min(this.player.maxHp, this.player.hp + 45);
     if (id === 'renew') { this.player.maxHp += 10; this.player.hp = Math.min(this.player.maxHp, this.player.hp + 10); }
-    if (id === 'power') this.passives.atk += .25;
+    if (id === 'power') this._bonusDamage += .05;
     this.metrics.upgrades++; this.choices = []; this.state = 'playing'; this.player.invuln = Math.max(this.player.invuln, .8);
     for (const [weapon, passive] of Object.entries(EVOLUTIONS)) if (!this.evolved[weapon] && this.weapons[weapon] >= 3 && this.passives[passive] >= 2) { this.evolved[weapon] = true; this.metrics.evolved++; this._effect('evolution', this.player.x, this.player.y, 180, 1.5, UPGRADES[weapon].color); this._text(this.player.x, this.player.y - 55, UPGRADES[weapon].evolution.toUpperCase(), UPGRADES[weapon].color, 2.2); this.events.push({ type: 'evolution', weapon, name: UPGRADES[weapon].evolution }); }
     if (this.xp >= this.xpNeeded) this._levelUp();
