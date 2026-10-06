@@ -1,0 +1,1 @@
+{"name":"lanternfall-survivors","version":"1.0.0","type":"module","scripts":{"test":"node --test engine.test.mjs ui.test.mjs"}}
